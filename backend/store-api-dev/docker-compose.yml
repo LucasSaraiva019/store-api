@@ -10,6 +10,31 @@ services:
         - "5443:5443"
     volumes:
       - ..:/api/
+      - cache:/api/tmp/cache
     working_dir: /api/
+    depends_on:
+      - database
     stdin_open: true
     tty: true
+  database:
+    image: postgres
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+    expose:
+    # Opens port 3306 on the container
+      - "3306"
+    # Where our data will be persisted
+    volumes:
+      - data:/var/lib/postgresql/data
+  
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on: 
+      - database
+volumes:
+  cache:
+  data:
